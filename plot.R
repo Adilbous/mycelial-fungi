@@ -3,9 +3,8 @@ library(compiler)
 library(deSolve)
 library(pracma)
 
-#setwd(getwd())
-#source("solver v1.R")
-source("/Users/adil/Desktop/OBT/Projet 25 Scripts/solver.R")
+setwd("/Users/adil/Documents/GitHub/mycelial-fungi")
+source("solver.R")
 
 U = solver()
 m = U[a1:b1,]

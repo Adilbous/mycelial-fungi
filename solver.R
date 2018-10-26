@@ -10,7 +10,8 @@ library(pracma)
 
 #setwd(getwd())
 #source("function.R")
-source("/Users/adil/Desktop/OBT/Projet 25 Scripts/function.R")
+setwd("/Users/adil/Documents/GitHub/mycelial-fungi")
+source("function.R")
 
 # Fonction des dérivées stiff
 
