@@ -95,41 +95,88 @@ init_U <-function(){
 
 # Execution du schéma numérique
 
-solver <-function(){
+# Fonction de calcul d'erreur
 
+rho <-function(Utau, Udemitau){
+  
+  Sum = 0
+  for (i in 1:5*NS){
+    Sum = Sum + ((Udemitau[i] - Utau[i]) / ( tol + tol*abs(Utau[i])))**2
+  }
+  return( 1/3 * sqrt( 1/(5*NS) * Sum ) )
+  
+}
+
+# Solver pour chaque pas de temps i 
+
+solver_step <-function(U, tau, i){
+  #z1 : Runge Kutta d'ordre 2 pour la premi?re partie de la d?composition
+  
+  k1 = fns(U[,i-1])
+  k2 = fns(U[,i-1]+tau/2*1/2*k1)
+  k3 = fns(U[,i-1]+tau/2*(1/2*k1+1/2*k2))
+  z1 = U[,i-1]+tau/2*(1/3*k1+1/3*k2+1/3*k3)
+  
+  #z2 : calcul avec le Jacobien
+  # Essayer rampe (condition initiale), si c'est mieux => Schéma Upwind pour l'espace
+  # Sinon, Euler implicite 
+  
+  v0 = z1
+  v1 = v0+tau/2*fs(v0)
+  A = diag(5*NS)-tau/2*jacobian(fs,v1)
+  # print(kappa(A, exact = TRUE))
+  
+  v2 = v1+tau/2*solve(A)%*%fs(v1)
+  z2 = v2
+  
+  #z3 : Runge Kutta d'ordre 2 pour la premi?re partie de la d?composition
+  # Crank Nicholson pour les 2 ? 
+  
+  k1 = fns(z2)
+  k2 = fns(z2+tau/2*1/2*k1)
+  k3 = fns(z2+tau/2*(1/2*k1+1/2*k2))
+  z3 = z2+tau/2*(1/3*k1+1/3*k2+1/3*k3)
+  
+  return(z3)
+}
+
+solver <-function(){
+  
   U = init_U()
+  tau = to
   
   for (i in 2:NT){
     print(i)
-    #z1 : Runge Kutta d'ordre 2 pour la premi?re partie de la d?composition
+    print(tau)
     
-    k1 = fns(U[,i-1])
-    k2 = fns(U[,i-1]+tau/2*1/2*k1)
-    k3 = fns(U[,i-1]+tau/2*(1/2*k1+1/2*k2))
-    z1 = U[,i-1]+tau/2*(1/3*k1+1/3*k2+1/3*k3)
+    Utau = solver_step(U, tau, i)
     
-    #z2 : calcul avec le Jacobien
-    # Essayer rampe (condition initiale), si c'est mieux => Schéma Upwind pour l'espace
-    # Sinon, Euler implicite 
+    Uinterm = U 
+    Uinterm[,i] = solver_step(U, tau/2, i)
     
-    v0 = z1
-    v1 = v0+tau/2*fs(v0)
-    A = diag(5*NS)-tau/2*jacobian(fs,v1)
-   # print(kappa(A, exact = TRUE))
+    Udemitau = solver_step( Uinterm, tau/2, i)
     
-    v2 = v1+tau/2*solve(A)%*%fs(v1)
-    z2 = v2
+    print(rho(Utau, Udemitau))
     
-    #z3 : Runge Kutta d'ordre 2 pour la premi?re partie de la d?composition
-    # Crank Nicholson pour les 2 ? 
+    if ( rho(Utau, Udemitau) < 1 ){
+      U[,i] = Udemitau
+    }
     
-    k1 = fns(z2)
-    k2 = fns(z2+tau/2*1/2*k1)
-    k3 = fns(z2+tau/2*(1/2*k1+1/2*k2))
-    z3 = z2+tau/2*(1/3*k1+1/3*k2+1/3*k3)
+    else {
+      
+      Uinterm1 = U
+      Uinterm1[,i] = solver_step(Uinterm1, tau/3, i)
+      
+      Uinterm2 = Uinterm1
+      Uinterm2[,i] = solver_step(Uinterm2, tau/3, i)
+      
+      U[,i] = solver_step( Uinterm2, tau/3, i)
+    }
     
-    U[,i]=z3
+    tau = tau * min(2, max( (4/5) * rho(Utau, Udemitau)**(-1/3)  , 1/4 ) )
+    
+    #U[,i]=z3
   }
-
+  
   return(U)
 }

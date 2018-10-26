@@ -34,9 +34,12 @@ NS=L%/%h
 
 # Discrétisation temporelle
 
-Ttot = 2 #Etendue
-tau = 1/1000 #grain
-NT = Ttot%/%tau
+Ttot = 5 #Etendue
+
+to = 1/1000 #grain initial
+tol = 1e-10
+NT = Ttot%/%to
+
 
 a1 = 1
 b1 = NS
