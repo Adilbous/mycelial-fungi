@@ -34,9 +34,9 @@ NS=L%/%h
 
 # Discrétisation temporelle
 
-Ttot=4 #Etendue
-tau=1/24/10 #grain
-NT=9
+Ttot = 2 #Etendue
+tau = 1/1000 #grain
+NT = Ttot%/%tau
 
 a1 = 1
 b1 = NS
@@ -187,9 +187,11 @@ dsidt_ns <-function(mj, mpj, pj, sij, sej){
   w=function(k){
     return(Da*mj[k]*px(k))
   }
+  
   fa=function(k){
     return(w(k)*sij[k])
   }
+  
   ra=function(k){
     if(k==1){ #fa-1=0
       return((fa(k+1)-fa(k)+epsilon)/(fa(k)+epsilon))
@@ -201,6 +203,7 @@ dsidt_ns <-function(mj, mpj, pj, sij, sej){
       return((fa(k+1)-fa(k)+epsilon)/(fa(k)-fa(k-1)+epsilon))
     }
   }
+  
   Fd=function(k){
     if(k==0){ 
       return(0)
@@ -209,9 +212,10 @@ dsidt_ns <-function(mj, mpj, pj, sij, sej){
       return(0)
     }
     else{
-      return(Di*(mj[k+1]-mj[k])/2*(sij[k+1]-sij[k])/h)
+      return(Di*(mj[k+1]+mj[k])/2*(sij[k+1]-sij[k])/h)
     }
   }
+  
   Fa = function(k){
     #print(w(k))
     if( w(k)>=0 | is.na(w(k)) ) {
@@ -219,25 +223,26 @@ dsidt_ns <-function(mj, mpj, pj, sij, sej){
           return(0)
         }
         else if(k==1){
-          return(fa(k)+1/2*Phi(ra(k)*(fa(k))))
+          return(fa(k)+1/2*Phi(ra(k))*(fa(k)))
         }
         else{
-          return(fa(k)+1/2*Phi(ra(k)*(fa(k)-fa(k-1))))
+          return(fa(k)+1/2*Phi(ra(k))*(fa(k)-fa(k-1)))
         }        
     }
     else{
       if(k==NS-1){ 
-        return(fa(k+1)+1/2*Phi(1/ra(k+1)*(fa(k+1))))
+        return(fa(k+1)+1/2*Phi(1/ra(k+1))*(fa(k+1)))
       }
       else if(k==NS){
         return(0)
       }
       else{
-        return(fa(k+1)+1/2*Phi(1/ra(k+1)*(fa(k+1)-fa(k+2))))
+        return(fa(k+1)+1/2*Phi(1/ra(k+1))*(fa(k+1)-fa(k+2)))
       }
     }
      
   }
+  
   #----fin des fonctions interm?diaires
   dsijns[1]=1/h*(Fd(1))-1/h*(Fa(1))
   for(j in 2:NS){
