@@ -2,6 +2,8 @@ rm(list=ls())
 library(compiler)
 library(deSolve)
 library(pracma)
+#install.packages("sensitivity")
+#library(sensitivity)
 
 setwd("/Users/adil/Documents/GitHub/mycelial-fungi")
 source("solver.R")
@@ -74,8 +76,13 @@ plot_se <- function(U){
   points(X, p[,5000], lwd=2, type="l", col="blue")
 }
  
-# plot(X, mp[,1000], lwd=2, type="l", col="orange", ylim=c(0,max(mp)))
-# points(X, mp[,2000], lwd=2, type="l", col="red")
-# points(X, mp[,3000], lwd=2, type="l", col="black")
-# points(X, mp[,4000], lwd=2, type="l", col="yellow")
-# points(X, mp[,5000], lwd=2, type="l", col="blue")
+plot_mp <- function(U){
+  
+  mp = U[a2:b2,]
+  
+  plot(X, mp[,1000], lwd=2, type="l", col="orange", ylim=c(0,max(mp[,1000:5000])))
+  points(X, mp[,2000], lwd=2, type="l", col="red")
+  points(X, mp[,3000], lwd=2, type="l", col="black")
+  points(X, mp[,4000], lwd=2, type="l", col="yellow")
+  points(X, mp[,5000], lwd=2, type="l", col="blue")
+}
