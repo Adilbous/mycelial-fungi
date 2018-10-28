@@ -7,50 +7,75 @@ setwd("/Users/adil/Documents/GitHub/mycelial-fungi")
 source("solver.R")
 
 U = solver()
-m = U[a1:b1,]
-mp = U[a2:b2,]
-p = U[a3:b3,]
-si = U[a4:b4,]
-se = U[a5:b5,]
-
-
 X = seq(0,L-h, by = h)
 
+plot_mmp <-function(U){
+  m = U[a1:b1,]
+  mp = U[a2:b2,]
+  
+  plot(X, m[,5000]+mp[,5000], main = "Total hypal density", ylab = "M + Mp", xlab = "Distance from center (cm)", 
+       lwd=2, type="l", col="blue", ylim = c(0,max( m[,1000:5000] + mp[,1000:5000])))
+  points(X, m[,1000]+mp[,1000], lwd=2, type="l", col="orange")
+  points(X, m[,2000]+mp[,2000], lwd=2, type="l", col="red")
+  points(X, m[,3000]+mp[,3000], lwd=2, type="l", col="black")
+  points(X, m[,4000]+mp[,4000], lwd=2, type="l", col="yellow")
+}
 
-plot(X, m[,1]+mp[,1], lwd=2, type="p", col="green")
-plot(X, m[,500]+mp[,500], lwd=2, type="p", col="orange")
-plot(X, m[,1000]+mp[,1000], lwd=2, type="p", col="red")
-plot(X, m[,1500]+mp[,1500], lwd=2, type="p", col="blue")
-plot(X, m[,2000]+mp[,2000], lwd=2, type="p", col="blue")
-#plot(X, m[,6]+mp[,6], lwd=2, type="p", col="blue")
+
+plot_m <-function(U){
+  
+  m = U[a1:b1,]
+  
+  plot(X, m[,1000], main = "Active hypal density", lwd=2, ylab = "M", xlab = "Distance from center (cm)",
+       type="l", col="orange", ylim=c(0,max(m[,1000:5000])))
+  points(X, m[,2000], lwd=2, type="l", col="red")
+  points(X, m[,3000], lwd=2, type="l", col="black")
+  points(X, m[,4000], lwd=2, type="l", col="yellow")
+  points(X, m[,5000], lwd=2, type="l", col="blue")
+  
+}
 
 
-# plot(X, m[,1]+mp[,1], lwd=2, type="p", col="green")
-# plot(X, m[,2]+mp[,2], lwd=2, type="p", col="orange")
-# plot(X, m[,3]+mp[,3], lwd=2, type="p", col="red")
-# plot(X, m[,4]+mp[,4], lwd=2, type="p", col="blue")
-# plot(X, m[,5]+mp[,5], lwd=2, type="p", col="blue")
-# plot(X, m[,6]+mp[,6], lwd=2, type="p", col="blue")
-# plot(X, m[,7]+mp[,7], lwd=2, type="p", col="blue")
-# plot(X, m[,8]+mp[,8], lwd=2, type="p", col="blue")
-# plot(X, m[,9]+mp[,9], lwd=2, type="p", col="blue")
-# 
-# plot(X, se[,1], lwd=2, type="p", col="green",)
-# plot(X, se[,2], lwd=2, type="p", col="orange")
-# plot(X, se[,3], lwd=2, type="p", col="red")
-# plot(X, se[,4], lwd=2, type="p", col="blue")
-# plot(X, se[,5], lwd=2, type="p", col="blue")
-# plot(X, se[,6], lwd=2, type="p", col="blue")
-# plot(X, se[,7], lwd=2, type="p", col="blue")
-# plot(X, se[,8], lwd=2, type="p", col="blue")
-# plot(X, se[,9], lwd=2, type="p", col="blue")
-# 
-# plot(X, p[,1], lwd=2, type="p", col="green",)
-# plot(X, p[,2], lwd=2, type="p", col="orange")
-# plot(X, p[,3], lwd=2, type="p", col="red")
-# plot(X, p[,4], lwd=2, type="p", col="blue")
-# plot(X, p[,5], lwd=2, type="p", col="blue")
-# plot(X, p[,6], lwd=2, type="p", col="blue")
-# plot(X, p[,7], lwd=2, type="p", col="blue")
-# plot(X, p[,8], lwd=2, type="p", col="blue")
-# plot(X, p[,9], lwd=2, type="p", col="blue")
+plot_si <- function(U){
+  
+  si = U[a4:b4,]
+  
+  plot(X, si[,1000], main = "Internal substrate concentration", lwd=2, ylab = "Si", xlab = "Distance from center (cm)",
+       type="l", col="orange", ylim=c(0,max(si[,1000:5000])))
+  points(X, si[,2000], lwd=2, type="l", col="red")
+  points(X, si[,3000], lwd=2, type="l", col="black")
+  points(X, si[,4000], lwd=2, type="l", col="yellow")
+  points(X, si[,5000], lwd=2, type="l", col="blue")
+
+}
+
+plot_se <- function(U){
+  
+  se = U[a5:b5,]
+  
+  plot(X, se[,1000], main = "External substrate concentration", lwd=2,ylab = "Si", xlab = "Distance from center (cm)",
+       type="l", col="orange", ylim=c(0,max(se[,1000:5000])))
+  points(X, se[,2000], lwd=2, type="l", col="red")
+  points(X, se[,3000], lwd=2, type="l", col="black")
+  points(X, se[,4000], lwd=2, type="l", col="yellow")
+  points(X, se[,5000], lwd=2, type="l", col="blue")
+}
+
+ plot_p <-function(U){
+   
+  p = U[a3:b3,]
+   
+
+  plot(X, p[,1000], main = "Tip density", lwd=2, type="l", ylab = "P", xlab = "Distance from center (cm)",
+       col="orange", ylim=c(0,max(p[,1000:5000])))
+  points(X, p[,2000], lwd=2, type="l", col="red")
+  points(X, p[,3000], lwd=2, type="l", col="black")
+  points(X, p[,4000], lwd=2, type="l", col="yellow")
+  points(X, p[,5000], lwd=2, type="l", col="blue")
+}
+ 
+# plot(X, mp[,1000], lwd=2, type="l", col="orange", ylim=c(0,max(mp)))
+# points(X, mp[,2000], lwd=2, type="l", col="red")
+# points(X, mp[,3000], lwd=2, type="l", col="black")
+# points(X, mp[,4000], lwd=2, type="l", col="yellow")
+# points(X, mp[,5000], lwd=2, type="l", col="blue")

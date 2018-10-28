@@ -68,10 +68,10 @@ init_U <-function(){
   # de   a5 = 4*NS+1 à  b5 = 5*NS : sej
   
   U[a1:b1,1]  = c(rep(m0,lambda%/%h),rep(0,NS-lambda%/%h))
-  U[a2:b2,1] = rep(0,NS)
+  U[a2:b2,1] = c(rep(0,NS))
   U[a3:b3,1] = c(rep(p0,lambda%/%h),rep(0,NS-lambda%/%h))
   U[a4:b4,1] = c(rep(si0,lambda%/%h),rep(0,NS-lambda%/%h))
-  U[a5:b5,1] = rep(se0,NS)
+  U[a5:b5,1] = c(rep(se0,NS))
   
   # for (i in a1:5){
   #   U[i,1] = (5-i)*m0/5
@@ -105,31 +105,31 @@ solver <-function(){
     #z1 : Runge Kutta d'ordre 2 pour la premi?re partie de la d?composition
     
     k1 = fns(U[,i-1])
-    k2 = fns(U[,i-1]+tau/2*1/2*k1)
-    k3 = fns(U[,i-1]+tau/2*(1/2*k1+1/2*k2))
-    z1 = U[,i-1]+tau/2*(1/3*k1+1/3*k2+1/3*k3)
+    k2 = fns(U[,i-1] + tau/2 * 1/2 * k1)
+    k3 = fns(U[,i-1]+ tau/2 * (1/2 * k1 + 1/2 * k2))
+    z1 = U[,i-1] + tau/2 * (1/3 * k1 + 1/3 * k2 + 1/3 * k3)
     
     #z2 : calcul avec le Jacobien
     # Essayer rampe (condition initiale), si c'est mieux => Schéma Upwind pour l'espace
     # Sinon, Euler implicite 
     
     v0 = z1
-    v1 = v0+tau/2*fs(v0)
-    A = diag(5*NS)-tau/2*jacobian(fs,v1)
+    v1 = v0 + tau/2 * fs(v0)
+    A = diag(5*NS) - tau/2 * jacobian(fs,v1)
    # print(kappa(A, exact = TRUE))
     
-    v2 = v1+tau/2*solve(A)%*%fs(v1)
+    v2 = v1 + tau/2 * solve(A) %*% fs(v1)
     z2 = v2
     
     #z3 : Runge Kutta d'ordre 2 pour la premi?re partie de la d?composition
     # Crank Nicholson pour les 2 ? 
     
     k1 = fns(z2)
-    k2 = fns(z2+tau/2*1/2*k1)
-    k3 = fns(z2+tau/2*(1/2*k1+1/2*k2))
-    z3 = z2+tau/2*(1/3*k1+1/3*k2+1/3*k3)
+    k2 = fns(z2 + tau/2 *1/2 * k1)
+    k3 = fns( z2+ tau/2*( 1/2* k1+ 1/2 *k2))
+    z3 = z2 + tau/2 *(1/3 * k1 + 1/3 * k2 + 1/3 * k3)
     
-    U[,i]=z3
+    U[,i] = z3
   }
 
   return(U)

@@ -23,18 +23,37 @@ p0=0.1
 si0=0.4
 se0=0.3
 
+# nu=1e5
+# d=1e-1
+# b=1e7
+# f=10
+# c1=9e2
+# c2=1e-7
+# c3=1e3
+# c4=1e-8
+# Di=1e-2
+# Da=1e-5
+# De=1e-1
+# lambda=0.2
+# 
+# m0=100
+# p0=100
+# si0=4e-5
+# se0=3e-5
+
+
 # Paramètres de la résolution
 
 # Discrétisation spatiale
 
-L=2 #Etendue
-h=0.1 #grain
-epsilon=1e-30
-NS=L%/%h 
+L =  4 #Etendue
+h = 0.1 #grain
+epsilon = 1e-30
+NS = L%/%h 
 
 # Discrétisation temporelle
 
-Ttot = 2 #Etendue
+Ttot = 5 #Etendue
 tau = 1/1000 #grain
 NT = Ttot%/%tau
 
@@ -53,7 +72,7 @@ b5=5*NS
 # Fonction de limitation de Van Leer
 
 Phi = function(r){
-  return (r+abs(r))/(1+abs(r))
+  return ( ( r + abs(r) ) / ( 1 + abs(r) ) )
 }
 
 # Dérivées temporelles stiff des variables d'état 
@@ -61,7 +80,7 @@ Phi = function(r){
 dmdt_s <-function(mj, mpj, pj, sij, sej){
   dmjs=rep(NA,NS)
   for(j in 1:NS){
-    dmjs[j]=nu*sij[j]*pj[j]-d*mj[j]
+    dmjs[j]= nu * sij[j] * pj[j] - d * mj[j]
   }
   return(dmjs)
 }
@@ -69,7 +88,7 @@ dmdt_s <-function(mj, mpj, pj, sij, sej){
 dmpdt_s <-function(mj, mpj, pj, sij, sej){
   dmpjs=rep(NA,NS)
   for(j in 1:NS){
-    dmpjs[j]=d*mj[j]
+    dmpjs[j]= d * mj[j]
   }
   return(dmpjs)
 }
@@ -77,7 +96,7 @@ dmpdt_s <-function(mj, mpj, pj, sij, sej){
 dpdt_s <-function(mj, mpj, pj, sij, sej){
   dpjs=rep(NA,NS)
   for(j in 1:NS){
-    dpjs[j]=b*sij[j]*mj[j]-f*mj[j]*pj[j]
+    dpjs[j]= b * sij[j] * mj[j] - f * mj[j] * pj[j]
   }
   return(dpjs)
 }
@@ -86,15 +105,15 @@ dsidt_s <-function(mj, mpj, pj, sij, sej){
   dsijs=rep(NA,NS)
   for(j in 1:NS){
     if(j==1){
-      pxj=(-3*pj[1]+4*pj[2]-pj[3])/(2*h)
+      pxj=( -3 * pj[1] + 4 * pj[2] - pj[3] ) / ( 2 * h)
     }
     else if(j==NS){
-      pxj=(3*pj[NS]-4*pj[NS-1]+pj[NS-2])/(2*h)
+      pxj=( 3 * pj[NS] - 4 * pj[NS-1] + pj[NS-2] ) / ( 2 * h)
     }
     else{
-      pxj=(pj[j+1]-pj[j-1])/(2*h)
+      pxj=( pj[j+1] - pj[j-1] ) / ( 2 * h)
     }
-    dsijs[j]=c1*sij[j]*mj[j]*sej[j]-c2*nu*sij[j]*pj[j]-c4*Da*mj[j]*sij[j]*abs(pxj)
+    dsijs[j]= c1 * sij[j] * mj[j] * sej[j] - c2 * nu * sij[j] * pj[j]-c4*Da*mj[j]*sij[j]*abs(pxj)
   }
   
   return(dsijs)
@@ -141,25 +160,25 @@ dpdt_ns <-function(mj, mpj, pj, sij, sej){
   dpjns=rep(NA,NS)
   for(j in 1:NS){
     fp=function(k){
-      return(nu*sij[k]*pj[k])
+      return(nu * sij[k] * pj[k])
     }
     rp=function(k){
       if(k==1){ #fp-1=0
-        return((fp(k+1)-fp(k)+epsilon)/(fp(k)+epsilon))
+        return( (fp(k+1) - fp(k) + epsilon)/( fp(k) + epsilon))
       }
       else if(k==NS){ #fpNS+1=0
-        return((-fp(k)+epsilon)/(fp(k)-fp(k-1)+epsilon))
+        return( (-fp(k) + epsilon ) / (fp(k) - fp(k-1) +epsilon))
       }
       else{
         return((fp(k+1)-fp(k)+epsilon)/(fp(k)-fp(k-1)+epsilon))
       }
     }
     if(j==1){
-      dpjns[j]=-1/h*(fp(j)+1/2*Phi(rp(j))*(fp(j)))
+      dpjns[j]= -1/h * (fp(j) + 1/2 * Phi(rp(j)) * (fp(j)))
     }
     else if(j==2){
-      dpjns[j]=-1/h*(fp(j)+1/2*Phi(rp(j))*(fp(j)-fp(j-1))-
-                      (fp(j-1)+1/2*Phi(rp(j-1))*(fp(j-1))))
+      dpjns[j]= -1/h * ( fp(j) + 1/2 * Phi(rp(j)) * ( fp(j)-fp(j-1) ) -
+                      ( fp(j-1) + 1/2 * Phi(rp(j-1)) * (fp(j-1)) )  )
     }
     else{
       dpjns[j]=-1/h*(fp(j)+1/2*Phi(rp(j))*(fp(j)-fp(j-1))-
@@ -169,9 +188,10 @@ dpdt_ns <-function(mj, mpj, pj, sij, sej){
   return(dpjns)
 }
 
-dsidt_ns <-function(mj, mpj, pj, sij, sej){
+dsidt_ns <-function(mj, mpj, pj, sij, sej){ 
   dsijns=rep(NA,NS)
-  #on d?finit quelques fonctions interm?diaires pour all?ger par la suite
+  
+  #on définit quelques fonctions intermédiaires pour alléger par la suite
   px=function(k){
     if(k==1){
       pxk=(-3*pj[1]+4*pj[2]-pj[3])/(2*h)
@@ -184,6 +204,7 @@ dsidt_ns <-function(mj, mpj, pj, sij, sej){
     }
     return (pxk)
   }
+  
   w=function(k){
     return(Da*mj[k]*px(k))
   }
@@ -194,13 +215,13 @@ dsidt_ns <-function(mj, mpj, pj, sij, sej){
   
   ra=function(k){
     if(k==1){ #fa-1=0
-      return((fa(k+1)-fa(k)+epsilon)/(fa(k)+epsilon))
+      return( (fa(k+1) - fa(k) + epsilon)/(fa(k) + epsilon) )
     }
     else if(k==NS){ #faNS+1=0
-      return((-fa(k)+epsilon)/(fa(k)-fa(k-1)+epsilon))
+      return( (-fa(k) + epsilon) / (fa(k) - fa(k-1) + epsilon) )
     }
     else{
-      return((fa(k+1)-fa(k)+epsilon)/(fa(k)-fa(k-1)+epsilon))
+      return( (fa(k+1) - fa(k) + epsilon) / (fa(k) - fa(k-1) + epsilon))
     }
   }
   
@@ -212,12 +233,11 @@ dsidt_ns <-function(mj, mpj, pj, sij, sej){
       return(0)
     }
     else{
-      return(Di*(mj[k+1]+mj[k])/2*(sij[k+1]-sij[k])/h)
+      return(Di * (mj[k+1] + mj[k])/2 * (sij[k+1] - sij[k]) / h)
     }
   }
   
   Fa = function(k){
-    #print(w(k))
     if( w(k)>=0 | is.na(w(k)) ) {
         if(k==0){ 
           return(0)
