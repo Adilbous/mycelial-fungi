@@ -5,11 +5,38 @@ library(pracma)
 #install.packages("sensitivity")
 #library(sensitivity)
 
-setwd("/Users/adil/Documents/GitHub/mycelial-fungi")
+setwd("/Users/adil/Desktop/untitled folder")
 source("solver.R")
 
+c1=9e1
+
 U = solver()
+si = U[a4:b4,]
 X = seq(0,L-h, by = h)
+
+
+# c2=1
+# c3=1e2
+# c4=1e-8
+
+C1 = seq(9e1/10, 9e1*7, length.out = 10)
+n = length(C1)
+mae = matrix(NA, nrow = 5, ncol = n)
+
+for (i in 1:n){
+  
+  c1 = C1[i]
+  U_iter = solver()
+  
+  si_iter = U_iter[a4:b4,]
+  
+  mae[1,i] = mean(si_iter[,1000] - si[,1000])
+  mae[2,i] = mean(si_iter[,2000] - si[,2000])
+  mae[3,i] = mean(si_iter[,3000] - si[,3000])
+  mae[4,i] = mean(si_iter[,4000] - si[,4000])
+  mae[5,i] = mean(si_iter[,5000] - si[,5000])
+  
+}
 
 plot_mmp <-function(U){
   m = U[a1:b1,]
