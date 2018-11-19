@@ -1,0 +1,21 @@
+README mycelial-fungi 
+Adi Bousfiha
+Modélisation du vivant - CentraleSupélec 
+
+Description : 
+
+Le code se présente sous la forme de 3 scripts R : 
+- Le script function.R contient les paramètres et fonctions intermédiaires nécessaires à la résolution du modèle. Il n'est pas nécessaire de l'ouvrir, il constitue, en quelques sortes, le back-end de notre solution. 
+
+- Le script solver.R contient, lui, les fonctions principales nécessaires à la résolution numérique du problème. Il peut être interessant de l'ouvrir pour comprendre la structure du schéma numérique, notamment les fonctions f_s et f_ns, ainsi que la méthode de résolution impliquant un jacobin. 
+
+- Le script plot.R est le front-end de notre solution : il appelle toutes les fonctions utiles définies précédemment et permet la résolution du problème au travers de la fonction solver(). Il convient également des fonctions de plot qu'on pourra utiliser.  
+
+Pour exécuter le code : 
+
+- Ouvrir le script solver.R, modifier la fonction "setwd()" en indiquant le répertoire où se situe le script function.R 
+- Ouvrir le script plot.R, modifier la fonction "setwd()" en indiquant le répertoire où se situe le script solver.R 
+
+- Executer le scrip plot.R : U = solver() va stocker dans la matrice U la solution calculée
+
+- Utiliser les fonctions plot_mmp(U), plot_p(U), plot_si(U) et plot_se(U) pour reproduire les graphes du rapport 
