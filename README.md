@@ -1,4 +1,4 @@
-# Mycelial Fungi 
+# Mycelial Fungi (OBT Modelization Class 18-19)
 
 This project aims to model the growth of mycelium and the active and inacative propagation of glucosis into the mycelial network. 
 Active propagation of nutrients in the mycelium, also called translocation, translates the ability of fungi to move nutrients from an area to another to sustain the growth of the mycilum in nutrients-poor area (or polluted areas, for example). 
